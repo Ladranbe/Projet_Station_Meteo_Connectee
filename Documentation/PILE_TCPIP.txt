@@ -1,0 +1,43 @@
+Pile TCP/IP :
+
+depot elec/bouvier/embedded_web
+
+sous dossier "utilities" => mpfs2 permet d'intégrer une page html : 2 façons de l'intégrer :
+		- mettre le dossier de la page html qui doit contenir un fichier "index.html"
+		- en dossier de sortie on obtient un fichier ".c" contenant la page html qu'il faut ajouter au projet
+sinon on sélectionne "BIN image" et on indique l'url de la page web => à utiliser la deuxième fois.
+
+webpage2 => exemple de page html pour tester. A adapter à notre carte
+jquery => langage mais prend trop de place dans l'eeprom.
+
+besoin au min du fichier index +  fichier mchp
+
+Dans DemoApp : liste de projets, choisir celui qui correspond le mieux à notre projet => prendre le projet du 97j60
+
+192.168.17.216 => adresse IP pour le réseau spécifique à l'option
+
+Modifier la configuration matérielle dans HWP_xxx.h : vérifier l'affectation des broches
+- laisser PICDEMNET2
+- changer les fusibles internes si besoin (PLL % 2)
+- GetSystemClock()
+- pas touche aux define des broches de l'enc28
+- tout ce qui n'est pas utilisé => mettre en commentaire.
+- vérifier si c'est les bonnes broches pour les eeprom aussi.
+
+L'eeprom gérant l'adresse mac n'est pas gérée par la pile, donc attention aux CS.
+
+
+TCPIP ENC28.h : identifier les protocoles à utiliser ou pas
+- commenter/décommenter les protocoles
+- commenter spi flash
+- décommenter eeprom la deuxième fois et première fois dans la flash
+- il faudra rajouter la lecture de l'adresse MAC si tout fonctionne pour avoir une adresse unique
+
+mainDemo.c : notre main à nous
+- fonction ProcessIO => notre code. Contrainte : ne jamais bloquer l'application, ne travailler qu'en scrutation
+C'est dans cette fonction qu'on implémentera l'adc pour les capteurs
+if(!ADCON0bits.GO_DONE){
+	
+	ADCON0bits.GO_DONE=1;
+}
+- fonction initaliseBoard : initialiser les CS et les mettre par défaut à 1
